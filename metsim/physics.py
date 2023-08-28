@@ -210,7 +210,7 @@ def solar_geom(elev: float, lat: float, lr: float) -> tuple:
     # Translate lat to rad
     lat = np.minimum(
         np.maximum(
-            lat * cnst.RAD_PER_DEG, -np.pi / 2.), np.pi / 2.0)
+            lat * cnst.RAD_PER_DEG, -np.pi / 2.0), np.pi / 2.0)
     coslat = np.cos(lat)
     sinlat = np.sin(lat)
 
@@ -244,18 +244,18 @@ def solar_geom(elev: float, lat: float, lr: float) -> tuple:
             # Cosine of the hour angle and solar zenith angle
             cosh = np.cos(h)
             cza = cosegeom * cosh + sinegeom
-            if (cza > 0):
+            if cza > 0:
                 # When sun is above flat horizon do flat-surface
                 # calculations to determine daily total transmittance
                 # and save potential radiation for calculation of
                 # diffuse portion
                 dir_flat_topa = dir_beam_topa * cza
                 am = 1.0 / (cza + 0.0000001)
-                if (am > 2.9):
+                if am > 2.9:
                     ami = min(max(int(
                         np.arccos(cza) / cnst.RAD_PER_DEG) - 69, 0), 20)
                     am = OPTAM[ami]
-                sum_trans += (np.power(trans, am) * dir_flat_topa)
+                sum_trans += np.power(trans, am) * dir_flat_topa
                 sum_flat_potrad += dir_flat_topa
             else:
                 # Sun not above horizon
@@ -269,17 +269,6 @@ def solar_geom(elev: float, lat: float, lr: float) -> tuple:
         if daylength[i] and sum_flat_potrad > 0:
             tiny_rad_fract[i] /= sum_flat_potrad
 
-        if daylength[i]:
-            # Transmittance and potential radiation
-            # averaged over daylength
-            tt_max0[i] = sum_trans / sum_flat_potrad
-            flat_potrad[i] = sum_flat_potrad / daylength[i]
-        else:
-            # No daytime - no radiation
-            tt_max0[i] = 0.
-            flat_potrad[i] = 0.
-    tt_max0[dayperyear - 1] = tt_max0[dayperyear - 2]
-    flat_potrad[dayperyear - 1] = flat_potrad[dayperyear - 2]
     daylength[dayperyear - 1] = daylength[dayperyear - 2]
     tiny_rad_fract[dayperyear - 1] = tiny_rad_fract[dayperyear - 2]
-    return tiny_rad_fract, daylength, flat_potrad, tt_max0
+    return tiny_rad_fract, daylength

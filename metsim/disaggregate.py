@@ -641,7 +641,7 @@ def shortwave(sw_rad: np.array, daylength: np.array, day_of_year: np.array,
     n_days = len(tmp_rad)
     ts_per_day = int(cnst.HOURS_PER_DAY * cnst.MIN_PER_HOUR / ts)
     disaggrad = np.zeros(int(n_days * ts_per_day))
-    rad_fract_per_day = int(cnst.SEC_PER_DAY / cnst.SW_RAD_DT)
+    rad_fract_per_day = int(cnst.SEC_PER_DAY / params['SW_RAD_DT'])
     tmp_rad = np.repeat(tmp_rad, rad_fract_per_day)
     if params['utc_offset']:
         utc_offset = int((params['lon'] / cnst.DEG_PER_REV) * rad_fract_per_day)
@@ -651,7 +651,7 @@ def shortwave(sw_rad: np.array, daylength: np.array, day_of_year: np.array,
     else:
         utc_offset = 0
         tiny_rad_fract = tiny_rad_fract.flatten()
-    chunk_size = int(ts * (cnst.SEC_PER_MIN / cnst.SW_RAD_DT))
+    chunk_size = int(ts * (cnst.SEC_PER_MIN / params['SW_RAD_DT']))
     ts_id = np.repeat(np.arange(ts_per_day), chunk_size)
     for day in range(n_days):
         # Mask to select out from tiny_rad_fract
