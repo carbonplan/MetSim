@@ -175,7 +175,7 @@ def svp_slope(temp: pd.Series, a: float=0.61078,
 
 
 @jit(nopython=True)
-def solar_geom(elev: float, lat: float, lr: float) -> tuple:
+def solar_geom(elev: float, lat: float, lr: float, params: dict) -> tuple:
     """
     Flat earth assumption
 
@@ -187,6 +187,8 @@ def solar_geom(elev: float, lat: float, lr: float) -> tuple:
         Latitude in decimal format
     lr:
         Lapse rate in K/m
+    params:
+        Dictionary with parameters for calculation.
 
     Returns
     -------
@@ -215,11 +217,10 @@ def solar_geom(elev: float, lat: float, lr: float) -> tuple:
     sinlat = np.sin(lat)
 
     # Sub-daily time step and angular step
-    dt = cnst.SW_RAD_DT
+    dt = params['SW_RAD_DT']
     dh = dt / cnst.SEC_PER_RAD
-
     # Allocate the radiation arrays
-    tiny_step_per_day = int(cnst.SEC_PER_DAY / cnst.SW_RAD_DT)
+    tiny_step_per_day = int(cnst.SEC_PER_DAY / params['SW_RAD_DT'])
     tiny_rad_fract = np.zeros((dayperyear, tiny_step_per_day))
     for i in range(dayperyear - 1):
         # Declination and quantities of interest
@@ -268,7 +269,6 @@ def solar_geom(elev: float, lat: float, lr: float) -> tuple:
 
         if daylength[i] and sum_flat_potrad > 0:
             tiny_rad_fract[i] /= sum_flat_potrad
-
     daylength[dayperyear - 1] = daylength[dayperyear - 2]
     tiny_rad_fract[dayperyear - 1] = tiny_rad_fract[dayperyear - 2]
     return tiny_rad_fract, daylength
