@@ -10,7 +10,7 @@ DEFAULT_ORIGIN = '0001-01-01'
 
 def date_range(start=None, end=None, periods=None, freq='D', tz=None,
                normalize=False, name=None, inclusive='both', calendar='standard',
-               **kwargs,):
+               **kwargs):
     ''' Return a fixed frequency datetime index, with day (calendar) as the
     default frequency
 
@@ -31,9 +31,8 @@ def date_range(start=None, end=None, periods=None, freq='D', tz=None,
         Normalize start/end dates to midnight before generating date range
     name : str, default None
         Name of the resulting index
-    closed : string or None, default None
-        Make the interval closed with respect to the given frequency to
-        the 'left', 'right', or both sides (None)
+    inclusive : str {“both”, “neither”, “left”, “right”}, default 'both'
+        Include boundaries; Whether to set each bound as closed or open, both as default
     calendar : string
         Describes the calendar used in the time calculations. Default is a the
         standard calendar (with leap years)
@@ -59,6 +58,7 @@ def date_range(start=None, end=None, periods=None, freq='D', tz=None,
         inclusive=inclusive,
         **kwargs,
     )
+
 
 
 def decode_freq(freq):
