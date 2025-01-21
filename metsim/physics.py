@@ -174,7 +174,7 @@ def svp_slope(temp: pd.Series, a: float=0.61078,
     return (b * c) / ((c + temp) * (c + temp)) * svp(temp, a=a, b=b, c=c)
 
 
-@jit(nopython=True)
+# @jit(nopython=True)
 def solar_geom(elev: float, lat: float, lr: float, params: dict) -> tuple:
     """
     Flat earth assumption
