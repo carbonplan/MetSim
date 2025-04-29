@@ -47,29 +47,18 @@ def date_range(start=None, end=None, periods=None, freq='D', tz=None,
     -------
     rng : DatetimeIndex
     '''
-    if calendar in ['standard', 'gregorian', 'propoleptic_gregorian']:
-        return pd.date_range(start=start, end=end, periods=periods,
-                             freq=freq, tz=tz, normalize=normalize, name=name,
-                             inclusive=inclusive, **kwargs)
-    else:
-        # start and end are give
-        if (start is not None) and (end is not None) and (periods is None):
-            steps, units = decode_freq(freq)
-            start_num, end_num = date2num(
-                pd.to_datetime([start, end]).to_pydatetime(),
-                units, calendar=calendar)
-            periods = int((end_num - start_num) / steps) + 1
+    return pd.date_range(
+        start=start,
+        end=end,
+        periods=periods,
+        freq=freq,
+        tz=tz,
+        normalize=normalize,
+        name=name,
+        inclusive=inclusive,
+        **kwargs,
+    )
 
-            times = num2date(
-                np.linspace(start_num, end_num, periods,
-                            endpoint=True,
-                            dtype=np.float128), units, calendar)
-            index = xr.CFTimeIndex(times).to_datetimeindex()
-            return index
-
-        else:
-            raise NotImplementedError(
-                'Specified arguments are not valid for this calendar')
 
 
 def decode_freq(freq):
